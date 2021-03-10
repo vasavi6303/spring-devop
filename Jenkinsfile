@@ -43,6 +43,26 @@ sh "'${mvnHome}/bin/mvn' sonar:sonar"
 bat(/"${mvnHome}\bin\mvn" sonar:sonar/)
 }
 }
+stage("Docker build") {
+steps {
+sh "docker build -t vasavi6303/spring-devop:${BUILD_TIMESTAMP} ."
+}
+}
+
+stage("Docker login") {
+steps {
+withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: '',
+usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
+sh "docker login --username $USERNAME --password $PASSWORD"
+}
+}
+}
+
+stage("Docker push") {
+steps {
+sh "docker push vasavi6303/spring-devop:${BUILD_TIMESTAMP}"
+}
+}
 
 stage('Push Docker image') {
 steps {
